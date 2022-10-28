@@ -233,4 +233,8 @@ source "drivers/trusty/Kconfig"
 
 source "techpack/audio/Kconfig"
 
+# vayu data drivers
+
+source "techpack/data/Kconfig"
+
 endmenu

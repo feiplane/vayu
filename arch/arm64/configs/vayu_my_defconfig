@@ -6123,7 +6123,7 @@ CONFIG_CJSON=y
 CONFIG_HWCONF_MANAGER=y
 # CONFIG_FACTORY_BUILD is not set
 
-# vayu device custom additions
+# vayu device custom additions below
 
 # wlan driver
 CONFIG_QCA_CLD_WLAN=y
@@ -6133,3 +6133,7 @@ CONFIG_SND_SOC_TAS256X=y
 CONFIG_TAS256X_CODEC=y
 CONFIG_TAS256X_REGMAP=y
 CONFIG_TAS25XX_ALGO=y
+
+# data drivers
+CONFIG_RMNET_PERF=y
+CONFIG_RMNET_SHS=y
