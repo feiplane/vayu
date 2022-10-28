@@ -272,14 +272,15 @@ DTC ?= $(objtree)/scripts/dtc/dtc
 
 # Disable noisy checks by default
 ifeq ($(KBUILD_ENABLE_EXTRA_GCC_CHECKS),)
-DTC_FLAGS += -Wno-unit_address_vs_reg
-endif
-ifeq ($(DTC_EXT),)
-DTC_FLAGS += -Wno-simple_bus_reg \
+DTC_FLAGS += -Wno-unit_address_vs_reg \
+	-Wno-simple_bus_reg \
 	-Wno-unit_address_format \
 	-Wno-pci_bridge \
 	-Wno-pci_device_bus_num \
-	-Wno-pci_device_reg
+	-Wno-pci_device_reg \
+	-Wno-reg_format\
+	-Wno-ranges_format \
+	-Wno-avoid_default_addr_size 
 endif
 
 ifeq ($(KBUILD_ENABLE_EXTRA_GCC_CHECKS),2)
@@ -288,6 +289,9 @@ DTC_FLAGS += -Wnode_name_chars_strict \
 endif
 
 DTC_FLAGS += $(DTC_FLAGS_$(basetarget))
+
+# Set -@ if the target is a base DTB that overlay is applied onto
+DTC_FLAGS += $(if $(filter $(patsubst $(obj)/%,%,$@), $(base-dtb-y)), -@)
 
 # Generate an assembly file to wrap the output of the device tree compiler
 quiet_cmd_dt_S_dtb= DTB     $@
