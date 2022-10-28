@@ -16189,18 +16189,18 @@ static int hdd_module_init(void)
 #else
 static int __init hdd_module_init(void)
 {
-	int ret = -EINVAL;
+	if (hdd_driver_load()){
+		int ret = -EINVAL;
 
-	ret = wlan_init_sysfs();
-	if (ret)
-		hdd_err("Failed to create sysfs entry");
-
-	return ret;
+		ret = wlan_init_sysfs();
+		if (ret)
+			hdd_err("Failed to create sysfs entry");
+		return ret;
+	}
+	return 0;
 }
 #endif
 
-
-#ifdef MODULE
 /**
  * hdd_module_exit() - Exit function
  *
@@ -16211,14 +16211,8 @@ static int __init hdd_module_init(void)
 static void __exit hdd_module_exit(void)
 {
 	hdd_driver_unload();
-}
-#else
-static void __exit hdd_module_exit(void)
-{
-	hdd_driver_unload();
 	wlan_deinit_sysfs();
 }
-#endif
 
 static int fwpath_changed_handler(const char *kmessage,
 				  const struct kernel_param *kp)
