@@ -134,3 +134,7 @@ Android.bp
 # ignore kernel output directory
 # 
 out/
+
+# ignore kernel.log
+#
+kernel.log
