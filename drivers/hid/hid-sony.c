@@ -509,6 +509,10 @@ struct motion_output_report_02 {
 #define DS4_INPUT_REPORT_0x11_SIZE 78
 #define DS4_OUTPUT_REPORT_0x05_SIZE 32
 #define DS4_OUTPUT_REPORT_0x11_SIZE 78
+//ds4 clone
+#define DS4_FEATURE_REPORT_0x12_SIZE 16
+#define DS4_CLONE_OUTPUT_REPORT_SIZE 334
+//ds4 clone
 #define SIXAXIS_REPORT_0xF2_SIZE 17
 #define SIXAXIS_REPORT_0xF5_SIZE 8
 #define MOTION_REPORT_0x02_SIZE 49
@@ -2595,7 +2599,7 @@ static int sony_get_bt_devaddr(struct sony_sc *sc)
 
 static int sony_check_add(struct sony_sc *sc)
 {
-	u8 *buf = NULL;
+	u8 *buf = NULL, *buf2 = NULL;
 	int n, ret;
 
 	if ((sc->quirks & DUALSHOCK4_CONTROLLER_BT) ||
@@ -2614,23 +2618,39 @@ static int sony_check_add(struct sony_sc *sc)
 		}
 	} else if (sc->quirks & (DUALSHOCK4_CONTROLLER_USB | DUALSHOCK4_DONGLE)) {
 		buf = kmalloc(DS4_FEATURE_REPORT_0x81_SIZE, GFP_KERNEL);
-		if (!buf)
+		buf2 = kmalloc(max(DS4_FEATURE_REPORT_0x12_SIZE, DS4_FEATURE_REPORT_0x81_SIZE), GFP_KERNEL);
+
+		if (!buf && !buf2)
 			return -ENOMEM;
 
-		/*
-		 * The MAC address of a DS4 controller connected via USB can be
-		 * retrieved with feature report 0x81. The address begins at
-		 * offset 1.
-		 */
 		ret = hid_hw_raw_request(sc->hdev, 0x81, buf,
 				DS4_FEATURE_REPORT_0x81_SIZE, HID_FEATURE_REPORT,
 				HID_REQ_GET_REPORT);
+		/*
+		* Some variants do not implement feature report 0x81 at all.
+        	* Fortunately, feature report 0x12 also contains the MAC address of a controller.
+		*/	
 
-		if (ret != DS4_FEATURE_REPORT_0x81_SIZE) {
+		if (ret != DS4_FEATURE_REPORT_0x81_SIZE)
+		{
+			ret = hid_hw_raw_request(sc->hdev, 0x12, buf2,
+				DS4_FEATURE_REPORT_0x12_SIZE, HID_FEATURE_REPORT,
+				HID_REQ_GET_REPORT);
+		}
+
+		/*
+		* The MAC address of a genuine DS4 controller connected via USB can be
+		* retrieved with feature report 0x81. The address begins at
+		* offset 1.
+		*/
+
+		if (ret != DS4_FEATURE_REPORT_0x81_SIZE && ret != DS4_FEATURE_REPORT_0x12_SIZE)
+		{
 			hid_err(sc->hdev, "failed to retrieve feature report 0x81 with the DualShock 4 MAC address\n");
 			ret = ret < 0 ? ret : -EINVAL;
 			goto out_free;
 		}
+
 
 		memcpy(sc->mac_address, &buf[1], sizeof(sc->mac_address));
 
