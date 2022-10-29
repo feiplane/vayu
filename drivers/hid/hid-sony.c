@@ -2623,12 +2623,19 @@ static int sony_check_add(struct sony_sc *sc)
 		if (!buf && !buf2)
 			return -ENOMEM;
 
+		/*
+		* The MAC address of a genuine DS4 controller connected via USB can be
+		* retrieved with feature report 0x81. The address begins at
+		* offset 1.
+		*/
+
 		ret = hid_hw_raw_request(sc->hdev, 0x81, buf,
 				DS4_FEATURE_REPORT_0x81_SIZE, HID_FEATURE_REPORT,
 				HID_REQ_GET_REPORT);
+
 		/*
-		* Some variants do not implement feature report 0x81 at all.
-        	* Fortunately, feature report 0x12 also contains the MAC address of a controller.
+		* Some clone variants do not implement feature report 0x81 at all,
+        	* fortunately, feature report 0x12 also contains the MAC address of those controllers.
 		*/	
 
 		if (ret != DS4_FEATURE_REPORT_0x81_SIZE)
@@ -2638,11 +2645,6 @@ static int sony_check_add(struct sony_sc *sc)
 				HID_REQ_GET_REPORT);
 		}
 
-		/*
-		* The MAC address of a genuine DS4 controller connected via USB can be
-		* retrieved with feature report 0x81. The address begins at
-		* offset 1.
-		*/
 
 		if (ret != DS4_FEATURE_REPORT_0x81_SIZE && ret != DS4_FEATURE_REPORT_0x12_SIZE)
 		{
@@ -2651,8 +2653,10 @@ static int sony_check_add(struct sony_sc *sc)
 			goto out_free;
 		}
 
-
-		memcpy(sc->mac_address, &buf[1], sizeof(sc->mac_address));
+		if (ret == DS4_FEATURE_REPORT_0x81_SIZE)
+			memcpy(sc->mac_address, &buf[1], sizeof(sc->mac_address));
+		else
+			memcpy(sc->mac_address, &buf2[1], sizeof(sc->mac_address));
 
 		snprintf(sc->hdev->uniq, sizeof(sc->hdev->uniq),
 			 "%pMR", sc->mac_address);
@@ -2695,6 +2699,7 @@ static int sony_check_add(struct sony_sc *sc)
 out_free:
 
 	kfree(buf);
+	kfree(buf2);
 
 	return ret;
 }
