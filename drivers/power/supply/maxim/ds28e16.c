@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2015 Maxim Integrated Products, Inc., All Rights Reserved.
+ * Copyright (C) 2021 XiaoMi, Inc.
  *
  *******************************************************************************
  *
@@ -56,10 +57,10 @@ unsigned char session_seed[32] = {
 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA};
 unsigned char S_secret[32] = {
-0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
-0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
-0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
-0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA};
+0x0C, 0x99, 0x2B, 0xD3, 0x95, 0xDB, 0xA0, 0xB4,
+0xEF, 0x07, 0xB3, 0xD8, 0x75, 0xF3, 0xC7, 0xAE,
+0xDA, 0xC4, 0x41, 0x2F, 0x48, 0x93, 0xB5, 0xD9,
+0xE1, 0xE5, 0x4B, 0x20, 0x9B, 0xF3, 0x77, 0x39};
 unsigned char challenge[32] = {0x00};
 int auth_ANON = 1;
 int auth_BDCONST = 1;
@@ -631,9 +632,10 @@ int DS28E16_cmd_device_disable(int op, unsigned char *password)
 /// 'Compute and Read Page Authentication' command
 ///
 /// @param[in] anon - boolean parameter
-/// @param[in] pg - Page number   2,计数�? 0,page0; 1,page1;
+/// @param[in] pg - Page number   2,计数器; 0,page0; 1,page1;
 /// @param[in] challenge
-/// @param[out] hmac   返回的计算结�?2个字�?///
+/// @param[out] hmac   返回的计算结果32个字节
+///
 /// @return
 /// DS_TRUE - command successful @n
 /// DS_FALSE - command failed
@@ -709,8 +711,8 @@ unsigned char *challenge, unsigned char *hmac)
 ///
 /// @param[in] anon - boolean parameter
 /// @param[in] bdconst - boolean parameter
-/// @param[in] pg - Page number   页面
-/// @param[in] partial secret   32个字节的种子
+/// @param[in] pg - Page number   é¡µé¢
+/// @param[in] partial secret   32ä¸ªå­—èŠ‚çš„ç§å­
 ///
 /// @return
 /// DS_TRUE - command successful @n
