@@ -1,18 +1,35 @@
-Linux kernel
-============
+I'm just an self-learning programming enthusiast that like to learn about programming in my free time.
+This is just my experimental kernel for Poco X3 Pro(vayu), will be mostly focuses on hid-sony and hid-playstation.
+Feel free to be my guest but use the codes at your own risk, I won't responsible for anything happened to your phone.
 
-This file was moved to Documentation/admin-guide/README.rst
+Things done:
+Added necessary drivers for the phone to operate properly:
+  - Wifi driver
+  - Audio driver (mandatory, or else the phone won't boot into system)
+  - Data driver
+  - Exfat file system
+Sony playstation 4/5 controllers related changes:
+  - Enabled force feedback(vibration) for Sony PS4 controller(Dualshock 4) - hid-sony
+  - Added Sony PS5 controller(Dualsense/Edge) - hid-playstation support.
+    ( Both sony driver sources upstreamed to latest commit available(as of 20221101),
+      with some backport and exclusion for hid-playstation (specifically 20221027 commit) )
+    ( Dualshock 4 coding will soon be migrated to hid-playstation as announced by the maintainer )
 
-Please notice that there are several guides for kernel developers and users.
-These guides can be rendered in a number of formats, like HTML and PDF.
 
-In order to build the documentation, use ``make htmldocs`` or
-``make pdfdocs``.
-
-There are various text files in the Documentation/ subdirectory,
-several of them using the Restructured Text markup notation.
-See Documentation/00-INDEX for a list of what is contained in each file.
-
-Please read the Documentation/process/changes.rst file, as it contains the
-requirements for building and running the kernel, and information about
-the problems which may result by upgrading your kernel.
+Things to do:
+  - trying to expand hid-sony and hid-playstation functionality.
+  
+  
+Things to find out:
+  - where to start android app development?
+  - how to convert kernel device driver to android userspace driver?
+  - how to execute linux binary from android app?
+ (Please lead me to correct paths)
+ 
+ 
+ Special Thanks to:
+  - https://github.com/MiCode/Xiaomi_Kernel_OpenSource
+  - https://github.com/blakbin/MiCode_Kernel_Vayu/tree/vayu-r-oss-mod
+  - https://www.kernel.org/
+  - https://patchwork.kernel.org/comment/23977779/
+  - https://android.googlesource.com/
