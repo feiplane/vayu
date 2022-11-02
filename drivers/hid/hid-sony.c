@@ -511,7 +511,6 @@ struct motion_output_report_02 {
 #define DS4_OUTPUT_REPORT_0x11_SIZE 78
 //ds4 clone
 #define DS4_FEATURE_REPORT_0x12_SIZE 16
-#define DS4_CLONE_OUTPUT_REPORT_SIZE 334
 //ds4 clone
 #define SIXAXIS_REPORT_0xF2_SIZE 17
 #define SIXAXIS_REPORT_0xF5_SIZE 8
@@ -2599,7 +2598,7 @@ static int sony_get_bt_devaddr(struct sony_sc *sc)
 
 static int sony_check_add(struct sony_sc *sc)
 {
-	u8 *buf = NULL, *buf2 = NULL;
+	u8 *buf = NULL;
 	int n, ret;
 
 	if ((sc->quirks & DUALSHOCK4_CONTROLLER_BT) ||
@@ -2617,10 +2616,9 @@ static int sony_check_add(struct sony_sc *sc)
 			return 0;
 		}
 	} else if (sc->quirks & (DUALSHOCK4_CONTROLLER_USB | DUALSHOCK4_DONGLE)) {
-		buf = kmalloc(DS4_FEATURE_REPORT_0x81_SIZE, GFP_KERNEL);
-		buf2 = kmalloc(max(DS4_FEATURE_REPORT_0x12_SIZE, DS4_FEATURE_REPORT_0x81_SIZE), GFP_KERNEL);
+		buf = kmalloc(max(DS4_FEATURE_REPORT_0x12_SIZE, DS4_FEATURE_REPORT_0x81_SIZE), GFP_KERNEL);
 
-		if (!buf && !buf2)
+		if (!buf)
 			return -ENOMEM;
 
 		/*
@@ -2640,7 +2638,7 @@ static int sony_check_add(struct sony_sc *sc)
 
 		if (ret != DS4_FEATURE_REPORT_0x81_SIZE)
 		{
-			ret = hid_hw_raw_request(sc->hdev, 0x12, buf2,
+			ret = hid_hw_raw_request(sc->hdev, 0x12, buf,
 				DS4_FEATURE_REPORT_0x12_SIZE, HID_FEATURE_REPORT,
 				HID_REQ_GET_REPORT);
 		}
@@ -2648,15 +2646,13 @@ static int sony_check_add(struct sony_sc *sc)
 
 		if (ret != DS4_FEATURE_REPORT_0x81_SIZE && ret != DS4_FEATURE_REPORT_0x12_SIZE)
 		{
-			hid_err(sc->hdev, "failed to retrieve feature report 0x81 with the DualShock 4 MAC address\n");
+			hid_err(sc->hdev, "failed to retrieve feature report 0x81/0x12 with the DualShock 4 MAC address\n");
 			ret = ret < 0 ? ret : -EINVAL;
+
 			goto out_free;
 		}
 
-		if (ret == DS4_FEATURE_REPORT_0x81_SIZE)
-			memcpy(sc->mac_address, &buf[1], sizeof(sc->mac_address));
-		else
-			memcpy(sc->mac_address, &buf2[1], sizeof(sc->mac_address));
+		memcpy(sc->mac_address, &buf[1], sizeof(sc->mac_address));
 
 		snprintf(sc->hdev->uniq, sizeof(sc->hdev->uniq),
 			 "%pMR", sc->mac_address);
@@ -2699,7 +2695,6 @@ static int sony_check_add(struct sony_sc *sc)
 out_free:
 
 	kfree(buf);
-	kfree(buf2);
 
 	return ret;
 }
