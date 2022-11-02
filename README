@@ -3,17 +3,21 @@ This is just my experimental kernel for Poco X3 Pro(vayu), will be mostly focuse
 Feel free to be my guest but use the codes at your own risk, I won't responsible for anything happened to your phone.
 
 Things done:
-Added necessary drivers for the phone to operate properly:
+Added necessary components for the phone to operate properly:
   - Wifi driver
   - Audio driver (mandatory, or else the phone won't boot into system)
   - Data driver
-  - Exfat file system
+  - Exfat filesystem
+  - Xiaomi Turbo Charge key
 Sony playstation 4/5 controllers related changes:
   - Enabled force feedback(vibration) for Sony PS4 controller(Dualshock 4) - hid-sony
   - Added Sony PS5 controller(Dualsense/Edge) - hid-playstation support.
     ( Both sony driver sources upstreamed to latest commit available(as of 20221101),
       with some backport and exclusion for hid-playstation (specifically 20221027 commit) )
     ( Dualshock 4 coding will soon be migrated to hid-playstation as announced by the maintainer )
+Fixes:
+  - some compiler warnings
+  - some compiler output display issue
 
 
 Things to do:
