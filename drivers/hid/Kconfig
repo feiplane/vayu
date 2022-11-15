@@ -822,7 +822,6 @@ config HID_SONY
 	Support for
 
 	  * Sony PS3 6-axis controllers
-	  * Sony PS4 DualShock 4 controllers
 	  * Buzz controllers
 	  * Sony PS3 Blue-ray Disk Remote Control (Bluetooth)
 	  * Logitech Harmony adapter for Sony Playstation 3 (Bluetooth)
