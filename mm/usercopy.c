@@ -217,9 +217,8 @@ static inline const char *check_heap_object(const void *ptr, unsigned long n,
 	page = compound_head(kmap_to_page((void *)ptr));
 
 	/* Check slab allocator for flags and size. */
-	if (PageSlab(page)){
+	if (PageSlab(page))
 		return __check_heap_object(ptr, n, page);
-	}
 
 	/* Verify object does not incorrectly span multiple pages. */
 	return check_page_span(ptr, n, page, to_user);
@@ -241,7 +240,7 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
 
 	/* Check for invalid addresses. */
 	err = check_bogus_address(ptr, n);
-	if (err) 
+	if (err)
 		goto report;
 
 	/* Check for bad heap object. */
@@ -269,7 +268,7 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
 
 	/* Check for object in kernel to avoid text exposure. */
 	err = check_kernel_text_object(ptr, n);
-	if (!err) 
+	if (!err)
 		return;
 
 report:
