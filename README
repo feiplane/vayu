@@ -17,9 +17,9 @@ Added necessary components for the phone to operate properly:
 Sony playstation 4/5 controllers related changes:
   - Enabled force feedback(vibration) for Sony PS4 controller(Dualshock 4) - hid-sony
   - Added Sony PS5 controller(Dualsense/Edge) - hid-playstation support.
-    ( Both sony driver sources upstreamed to latest commit available(as of 20221101),
-      with some backport and exclusion for hid-playstation (specifically 20221027 commit) )
-    ( Dualshock 4 coding will soon be migrated to hid-playstation as announced by the maintainer )
+  - Migrated Dualshock 4 support from hid-sony to hid-playstation
+    ( Both sony driver sources upstreamed to latest commit available(as of 2022-12),
+      with necessary backports dependency for hid-playstation Dualshock 4 support )
     
 Fixes:
   - some compiler warnings
@@ -34,7 +34,7 @@ Things to find out:
   - where to start android app development?
   - how to convert kernel device driver to android userspace driver?
   - how to execute linux binary from android app?
- (Please lead me to correct paths)
+ (Gurus please lead me to correct paths)
  
  
  Special Thanks to:
@@ -43,3 +43,4 @@ Things to find out:
   - https://www.kernel.org/
   - https://patchwork.kernel.org/comment/23977779/
   - https://android.googlesource.com/
+  and Sony Team which leads by Mr. Roderick Colenbrander to contribute in both the Sony drivers support.
