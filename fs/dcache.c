@@ -1606,6 +1606,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 	int err;
 
 	dentry = kmem_cache_alloc(dentry_cache, GFP_KERNEL);
+
 	if (!dentry)
 		return NULL;
 

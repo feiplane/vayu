@@ -301,6 +301,9 @@ static inline void sysfs_enable_ns(struct kernfs_node *kn)
 	return kernfs_enable_ns(kn);
 }
 
+__printf(2, 3)
+int sysfs_emit(char *buf, const char *fmt, ...);
+
 #else /* CONFIG_SYSFS */
 
 static inline int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
@@ -505,6 +508,12 @@ static inline int __must_check sysfs_init(void)
 
 static inline void sysfs_enable_ns(struct kernfs_node *kn)
 {
+}
+
+__printf(2, 3)
+static inline int sysfs_emit(char *buf, const char *fmt, ...)
+{
+	return 0;
 }
 
 #endif /* CONFIG_SYSFS */
