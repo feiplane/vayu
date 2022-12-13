@@ -18,8 +18,8 @@ Sony playstation 4/5 controllers related changes:
   - Enabled force feedback(vibration) for Sony PS4 controller(Dualshock 4) - hid-sony
   - Added Sony PS5 controller(Dualsense/Edge) - hid-playstation support.
   - Migrated Dualshock 4 support from hid-sony to hid-playstation
-    ( Both sony driver sources upstreamed to latest commit available(as of 2022-12),
-      with necessary backports dependency for hid-playstation Dualshock 4 support )
+    ( Both sony driver sources upstreamed to exactly latest commit available(as of 2022-12),
+      with necessary backports/dependency for hid-playstation)
     
 Fixes:
   - some compiler warnings
@@ -43,4 +43,4 @@ Things to find out:
   - https://www.kernel.org/
   - https://patchwork.kernel.org/comment/23977779/
   - https://android.googlesource.com/
-  and Sony Team which leads by Mr. Roderick Colenbrander to contribute in both the Sony drivers support.
+  and Sony Team which leads by Mr. Roderick Colenbrander contributing in both the Sony drivers support.
