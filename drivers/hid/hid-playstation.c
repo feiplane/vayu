@@ -1575,12 +1575,6 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
 	if (!ds)
 		return ERR_PTR(-ENOMEM);
 
-	/*
-	 * Patch version to allow userspace to distinguish between
-	 * hid-generic vs hid-playstation axis and button mapping.
-	 */
-	hdev->version |= HID_PLAYSTATION_VERSION_PATCH;
-
 	ps_dev = &ds->base;
 	ps_dev->hdev = hdev;
 	spin_lock_init(&ps_dev->lock);
