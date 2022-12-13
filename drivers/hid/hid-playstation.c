@@ -594,6 +594,16 @@ static struct input_dev *ps_allocate_input_dev(struct hid_device *hdev, const ch
 	if (!input_dev)
 		return ERR_PTR(-ENOMEM);
 
+	/* Proper naming scheme instead of just "Wireless Controller" */
+	if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER)
+		memcpy(&hdev->name, "DualSense", sizeof(hdev->name));
+	else if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER_2)
+		memcpy(&hdev->name, "DualSense Edge", sizeof(hdev->name));
+	else if (hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER ||
+			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2 ||
+			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE)
+		memcpy(&hdev->name, "DualShock 4", sizeof(hdev->name));
+
 	input_dev->id.bustype = hdev->bus;
 	input_dev->id.vendor = hdev->vendor;
 	input_dev->id.product = hdev->product;
@@ -601,12 +611,12 @@ static struct input_dev *ps_allocate_input_dev(struct hid_device *hdev, const ch
 	input_dev->uniq = hdev->uniq;
 
 	if (name_suffix) {
-		input_dev->name = devm_kasprintf(&hdev->dev, GFP_KERNEL, "%s %s", hdev->name,
+		input_dev->name = devm_kasprintf(&hdev->dev, GFP_KERNEL, "Sony %s %s", hdev->name,
 				name_suffix);
 		if (!input_dev->name)
 			return ERR_PTR(-ENOMEM);
 	} else {
-		input_dev->name = hdev->name;
+		input_dev->name = devm_kasprintf(&hdev->dev, GFP_KERNEL, "Sony %s", hdev->name);
 	}
 
 	input_set_drvdata(input_dev, hdev);
