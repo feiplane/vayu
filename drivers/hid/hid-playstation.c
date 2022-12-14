@@ -594,16 +594,6 @@ static struct input_dev *ps_allocate_input_dev(struct hid_device *hdev, const ch
 	if (!input_dev)
 		return ERR_PTR(-ENOMEM);
 
-	/* Proper naming scheme instead of just "Wireless Controller" */
-	if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER)
-		memcpy(&hdev->name, "DualSense", sizeof(hdev->name));
-	else if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER_2)
-		memcpy(&hdev->name, "DualSense Edge", sizeof(hdev->name));
-	else if (hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER ||
-			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2 ||
-			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE)
-		memcpy(&hdev->name, "DualShock 4", sizeof(hdev->name));
-
 	input_dev->id.bustype = hdev->bus;
 	input_dev->id.vendor = hdev->vendor;
 	input_dev->id.product = hdev->product;
@@ -2574,6 +2564,18 @@ static int ps_probe(struct hid_device *hdev, const struct hid_device_id *id)
 		hid_err(hdev, "Parse failed\n");
 		return ret;
 	}
+
+	/* Proper naming scheme instead of just "Wireless Controller" */
+	if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER)
+		memcpy(&hdev->name, "DualSense", sizeof(hdev->name));
+	else if (hdev->product == USB_DEVICE_ID_SONY_PS5_CONTROLLER_2)
+		memcpy(&hdev->name, "DualSense Edge", sizeof(hdev->name));
+	else if (hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER ||
+			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2 ||
+			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE)
+		memcpy(&hdev->name, "DualShock 4", sizeof(hdev->name));
+
+	memcpy(hdev->phys, hdev->uniq, sizeof(hdev->phys));
 
 	/*
 	 * Patch version to allow userspace to distinguish between
