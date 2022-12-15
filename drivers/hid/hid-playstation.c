@@ -2557,6 +2557,8 @@ static int ps_raw_event(struct hid_device *hdev, struct hid_report *report,
 static int ps_probe(struct hid_device *hdev, const struct hid_device_id *id)
 {
 	struct ps_device *dev;
+	uint8_t *buf;
+	char phy[6];
 	int ret;
 
 	ret = hid_parse(hdev);
@@ -2575,7 +2577,18 @@ static int ps_probe(struct hid_device *hdev, const struct hid_device_id *id)
 			hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE)
 		memcpy(&hdev->name, "DualShock 4", sizeof(hdev->name));
 
-	memcpy(hdev->phys, hdev->uniq, sizeof(hdev->phys));
+	/* Get device physical location */
+	if (hdev->bus == BUS_USB) {
+		buf = kzalloc(DS4_FEATURE_REPORT_PAIRING_INFO_SIZE, GFP_KERNEL);
+		ps_get_report(hdev, DS4_FEATURE_REPORT_PAIRING_INFO, buf,
+				DS4_FEATURE_REPORT_PAIRING_INFO_SIZE, false);
+
+		memcpy(&phy, &buf[1], sizeof(phy));
+		snprintf(hdev->phys, sizeof(hdev->phys), "%pMR", phy);
+		
+		kfree(buf);
+	} else /* BUS_BLUETOOTH */
+		memcpy(hdev->phys, hdev->uniq, sizeof(hdev->phys));
 
 	/*
 	 * Patch version to allow userspace to distinguish between
@@ -2657,7 +2670,7 @@ static struct hid_driver ps_driver = {
 	.name		= "playstation",
 	.id_table	= ps_devices,
 	.probe		= ps_probe,
-	.remove		= ps_remove,
+	.remove	= ps_remove,
 	.raw_event	= ps_raw_event,
 	.driver = {
 		.dev_groups = ps_device_groups,
