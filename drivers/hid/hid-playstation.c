@@ -14,6 +14,7 @@
 #include <linux/leds.h>
 #include <linux/led-class-multicolor.h>
 #include <linux/module.h>
+#include <linux/delay.h>
 
 #include <asm/unaligned.h>
 
@@ -570,12 +571,15 @@ static int ps_devices_list_remove(struct ps_device *dev)
 
 static int ps_device_set_player_id(struct ps_device *dev)
 {
-	int ret = ida_alloc(&ps_player_id_allocator, GFP_KERNEL);
+	int ret;
 
+	ret = ida_alloc(&ps_player_id_allocator, GFP_KERNEL);
+		
 	if (ret < 0)
 		return ret;
 
 	dev->player_id = ret;
+
 	return 0;
 }
 
@@ -2401,6 +2405,12 @@ static void dualshock4_set_default_lightbar_colors(struct dualshock4 *ds4)
 	};
 
 	uint8_t player_id = ds4->base.player_id % ARRAY_SIZE(player_colors);
+
+	/* Some DS4 clone tends to posses higher latency when receiving output report,
+	 * this will cause lightbar color illuminated incorrectly until next report is sent,
+	 * delaying the execution is necessary for proper led illumination.
+	 */
+	msleep(50);
 
 	ds4->lightbar_enabled = true;
 	ds4->lightbar_red = player_colors[player_id][0];

@@ -243,10 +243,13 @@ struct ida {
 	struct xarray xa;
 };
 
-#define IDA_INIT	{						\
+#define IDA_INIT_FLAGS	(XA_FLAGS_LOCK_IRQ | XA_FLAGS_ALLOC)
+
+#define IDA_INIT(name)	{						\
 	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
+	.xa = XARRAY_INIT(name, IDA_INIT_FLAGS),				\
 }
-#define DEFINE_IDA(name)	struct ida name = IDA_INIT
+#define DEFINE_IDA(name)		struct ida name = IDA_INIT(name)
 
 int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
 int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
@@ -280,6 +283,7 @@ void ida_simple_remove(struct ida *ida, unsigned int id);
 static inline void ida_init(struct ida *ida)
 {
 	INIT_RADIX_TREE(&ida->ida_rt, IDR_RT_MARKER | GFP_NOWAIT);
+	xa_init_flags(&ida->xa, IDA_INIT_FLAGS);
 }
 
 /**
